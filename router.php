@@ -17,11 +17,14 @@ class Router
 
         $this->controller = !empty($url[1]) ? $url[1] : 'User';
 
-        if ($url[2] == "1" || $url[2] == "2") {
-            $metodo = 'index';
-        } else {
-            $metodo = $url[2];
+        if (!empty($url[2])) {
+            if ($url[2] == "1" || $url[2] == "2") {
+                $metodo = 'index';
+            } else {
+                $metodo = $url[2];
+            }
         }
+        
         $this->method = !empty($url[2]) ? $metodo : 'defecto';
 
         $this->controller = $this->controller . 'Controller';
