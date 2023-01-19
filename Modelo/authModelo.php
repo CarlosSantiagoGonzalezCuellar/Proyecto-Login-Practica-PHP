@@ -79,7 +79,8 @@ class auth extends conexionBd
         $_pdo = new conexionBd;
         $val = true;
         $token = bin2hex(openssl_random_pseudo_bytes(16, $val));
-        $fechaExp = date("Y-m-d H:i");
+        $fecha = time() + 86400;
+        $fechaExp = date("Y-m-d H:i:s", substr($fecha, 0, 10));
         $estado = "Activo";
         $sql = $_pdo->prepare("INSERT INTO tokens (token, usuario, fecha_expiracion, estado) VALUES (:token, :usuario, :fechaExp, :estado)");
         $sql->bindValue(':token', $token);
@@ -91,6 +92,26 @@ class auth extends conexionBd
 
         if ($verifica) {
             return $token;
+        } else {
+            return 0;
+        }
+    }
+
+    //<-- ========== UPDATE ========== -->
+    public function inactivarToken()
+    {
+        $_pdo = new conexionBd;
+        $estado = "Inactivo";
+        $fecha = date('Y-m-d H:i:s');
+        $sql = $_pdo->prepare("UPDATE tokens SET estado=:estado
+        WHERE fecha_expiracion < :fecha");
+        $sql->bindValue(':estado', $estado);
+        $sql->bindValue(':fecha', $fecha);
+        $sql->execute();
+
+        $resp = $sql;
+        if ($resp == true) {
+            return $resp;
         } else {
             return 0;
         }
@@ -130,7 +151,7 @@ class auth extends conexionBd
     }
 
     //<-- ========== READ ========== -->
-    public function readAuth()
+    public function readAuth($id)
     {
         $_pdo = new conexionBd;
 
@@ -138,7 +159,8 @@ class auth extends conexionBd
             FROM tokens
             INNER JOIN credenciales
             ON tokens.usuario = credenciales.id
-            WHERE tokens.estado = 'Activo'");
+            WHERE tokens.id = :id AND tokens.estado = 'Activo'");
+        $sql->bindValue(':id', $id);
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $datos = $sql->fetchAll();

@@ -129,6 +129,7 @@ class usuarios extends conexionBd
                     return $_respuestas->error_400();
                 } else {
                     $this->usuarioId = $datos["id"];
+
                     if (isset($datos["nombre"])) {
                         $this->nombre = $datos["nombre"];
                     }
@@ -138,15 +139,20 @@ class usuarios extends conexionBd
                     if (isset($datos["estado"])) {
                         $this->estado = $datos["estado"];
                     }
-                    $resp = $this->modificarUsuario();
-                    if ($resp) {
-                        $respuesta = $_respuestas->response;
-                        $respuesta["result"] = array(
-                            "id" => $this->usuarioId
-                        );
-                        return $respuesta;
+                    $datos = $this->obtenerUsuario($this->usuarioId);
+                    if ($datos) {
+                        $resp = $this->modificarUsuario();
+                        if ($resp) {
+                            $respuesta = $_respuestas->response;
+                            $respuesta["result"] = array(
+                                "id" => $this->usuarioId
+                            );
+                            return $respuesta;
+                        } else {
+                            return $_respuestas->error_500();
+                        }
                     } else {
-                        return $_respuestas->error_500();
+                        return $_respuestas->error_200("Usuario inactivo!!");
                     }
                 }
             } else {
@@ -192,16 +198,20 @@ class usuarios extends conexionBd
                 } else {
                     $this->usuarioId = $datos["id"];
                     $this->estado = "Inactivo";
-
-                    $resp = $this->eliminarUsuario();
-                    if ($resp) {
-                        $respuesta = $_respuestas->response;
-                        $respuesta["result"] = array(
-                            "id" => $this->usuarioId
-                        );
-                        return $respuesta;
+                    $datos = $this->obtenerUsuario($this->usuarioId);
+                    if ($datos) {
+                        $resp = $this->eliminarUsuario();
+                        if ($resp) {
+                            $respuesta = $_respuestas->response;
+                            $respuesta["result"] = array(
+                                "id" => $this->usuarioId
+                            );
+                            return $respuesta;
+                        } else {
+                            return $_respuestas->error_500();
+                        }
                     } else {
-                        return $_respuestas->error_500();
+                        return $_respuestas->error_200("Usuario inactivo!!");
                     }
                 }
             } else {
