@@ -2,6 +2,7 @@
 
 require_once "./Modelo/userModelo.php";
 require_once "./Controlador/respuestas.php";
+require_once "./Controlador/userValidate.php";
 
 $_respuestas = new respuestas;
 class UserController
@@ -11,6 +12,7 @@ class UserController
     public function index()
     {
         $_usuarios = new usuarios;
+        $_userVali = new userValidate;
         $_respuestas = new respuestas;
         $url = explode('/', URL);
 
@@ -41,7 +43,7 @@ class UserController
                 //Recibe datos enviados 
                 $postBody = file_get_contents("php://input");
                 //Envia datos al manejador
-                $datosArray = $_usuarios->patch($postBody);
+                $datosArray = $_userVali->patch($postBody);
                 //Devuelve respuesta
                 header("Content-Type: application/json");
                 if (isset($datosArray["result"]["error_id"])) {
@@ -66,13 +68,13 @@ class UserController
     //<!-- ========== METODO DE URL CREATE DE USER: POST ========== -->
     public function create()
     {
-        $_usuarios = new usuarios;
+        $_userVali = new userValidate;
         $_respuestas = new respuestas;
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             //Recibe datos enviados 
             $postBody = file_get_contents("php://input");
             //Envia al manejador
-            $datosArray = $_usuarios->post($postBody);
+            $datosArray = $_userVali->post($postBody);
             //Devuelve respuesta
             header("Content-Type: application/json");
             if (isset($datosArray["result"]["error_id"])) {
@@ -92,13 +94,13 @@ class UserController
     //<!-- ========== METODO DE URL DELETE DE USER: POST ========== -->
     public function delete()
     {
-        $_usuarios = new usuarios;
+        $_userVali = new userValidate;
         $_respuestas = new respuestas;
         if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
             //Recibe datos enviados 
             $postBody = file_get_contents("php://input");
             //Envia datos al manejador
-            $datosArray = $_usuarios->delete($postBody);
+            $datosArray = $_userVali->delete($postBody);
             //Devuelve respuesta
             header("Content-Type: application/json");
             if (isset($datosArray["result"]["error_id"])) {

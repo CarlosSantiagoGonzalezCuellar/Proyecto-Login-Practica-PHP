@@ -1,16 +1,8 @@
 <?php
 require_once "./Modelo/Conexion/conexion.php";
-require_once "./Controlador/respuestas.php";
-require_once "./Modelo/authModelo.php";
 
 class usuarios extends conexionBd
 {
-    private $usuarioId = "";
-    private $nombre = "";
-    private $rol = "";
-    private $estado = "";
-    private $token = "";
-
     //<-- ========== LISTAR USUARIOS  ========== -->
     public function listaUsuarios()
     {
@@ -20,7 +12,7 @@ class usuarios extends conexionBd
             FROM usuarios
             INNER JOIN roles
             ON usuarios.rol = roles.id
-            WHERE usuarios.estado = 'Activo'");
+            WHERE usuarios.estado = '1'");
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $datos = $sql->fetchAll();
@@ -41,7 +33,7 @@ class usuarios extends conexionBd
             FROM usuarios
             INNER JOIN roles
             ON usuarios.rol = roles.id
-            WHERE usuarios.id = :id AND usuarios.estado = 'Activo'");
+            WHERE usuarios.id = :id AND usuarios.estado = '1'");
         $sql->bindValue(':id', $id);
         $sql->execute();
         $sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -55,50 +47,15 @@ class usuarios extends conexionBd
         return $resp;
     }
 
-    //<-- ========== METODO POST CON VALIDACIONES ========== -->
-    public function post($json)
-    {
-        $_respuestas = new respuestas;
-        $_auth = new auth;
-        $datos = json_decode($json, true);
-
-        if (!isset($datos["token"])) {
-            return $_respuestas->error_401();
-        } else {
-            $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
-                if (!isset($datos["nombre"]) || !isset($datos["rol"])) {
-                    return $_respuestas->error_400();
-                } else {
-                    $this->nombre = $datos["nombre"];
-                    $this->rol = $datos["rol"];
-                    $this->estado = "Activo";
-                    $resp = $this->insertarUsuario();
-                    if ($resp) {
-                        $respuesta = $_respuestas->response;
-                        $respuesta["result"] = array(
-                            "id" => $resp
-                        );
-                        return $respuesta;
-                    } else {
-                        return $_respuestas->error_500();
-                    }
-                }
-            } else {
-                return $_respuestas->error_401("El token enviado es invalido o ha caducado!!");
-            }
-        }
-    }
-
     //<-- ========== METODO PARA AÑADIR NUEVO USUARIO ========== -->
-    private function insertarUsuario()
+    public function insertarUsuario($nombre, $rol, $estado)
     {
         $_pdo = new conexionBd;
         $sql = $_pdo->prepare("INSERT INTO usuarios (nombre, rol, estado) 
         VALUES (:nombre, :rol, :estado)");
-        $sql->bindValue(':nombre', $this->nombre);
-        $sql->bindValue(':rol', $this->rol);
-        $sql->bindValue(':estado', $this->estado);
+        $sql->bindValue(':nombre', $nombre);
+        $sql->bindValue(':rol', $rol);
+        $sql->bindValue(':estado', $estado);
         $sql->execute();
         $respuesta = $sql;
         if ($respuesta == true) {
@@ -114,62 +71,16 @@ class usuarios extends conexionBd
         }
     }
 
-    //<-- ========== METODO PATCH CON VALIDACIONES ========== -->
-    public function patch($json)
-    {
-        $_respuestas = new respuestas;
-        $_auth = new auth;
-        $datos = json_decode($json, true);
-
-        if (!isset($datos["token"])) {
-            return $_respuestas->error_401();
-        } else {
-            $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
-                if (!isset($datos["id"])) {
-                    return $_respuestas->error_400();
-                } else {
-                    $this->usuarioId = $datos["id"];
-
-                    if (isset($datos["nombre"])) {
-                        $this->nombre = $datos["nombre"];
-                    }
-                    if (isset($datos["rol"])) {
-                        $this->rol = $datos["rol"];
-                    }
-                    $this->estado = "Activo";
-                    $datos = $this->obtenerUsuario($this->usuarioId);
-                    if ($datos) {
-                        $resp = $this->modificarUsuario();
-                        if ($resp) {
-                            $respuesta = $_respuestas->response;
-                            $respuesta["result"] = array(
-                                "id" => $this->usuarioId
-                            );
-                            return $respuesta;
-                        } else {
-                            return $_respuestas->error_500();
-                        }
-                    } else {
-                        return $_respuestas->error_200("Usuario inactivo!!");
-                    }
-                }
-            } else {
-                return $_respuestas->error_401("El token enviado es invalido o ha caducado!!");
-            }
-        }
-    }
-
     //<-- ========== METODO PARA MODIFICAR UN USUARIO SEGUN SU ID ========== -->
-    private function modificarUsuario()
+    public function modificarUsuario($nombre, $rol, $estado, $usuarioId)
     {
         $_pdo = new conexionBd;
         $sql = $_pdo->prepare("UPDATE usuarios SET nombre=:nombre, rol=:rol, estado=:estado
         WHERE id=:id");
-        $sql->bindValue(':nombre', $this->nombre);
-        $sql->bindValue(':rol', $this->rol);
-        $sql->bindValue(':estado', $this->estado);
-        $sql->bindValue(':id', $this->usuarioId);
+        $sql->bindValue(':nombre', $nombre);
+        $sql->bindValue(':rol', $rol);
+        $sql->bindValue(':estado', $estado);
+        $sql->bindValue(':id', $usuarioId);
         $sql->execute();
 
         $resp = $sql;
@@ -180,53 +91,14 @@ class usuarios extends conexionBd
         }
     }
 
-    //<-- ========== METODO DELETE CON VALIDACIONES ========== -->
-    public function delete($json)
-    {
-        $_respuestas = new respuestas;
-        $_auth = new auth;
-        $datos = json_decode($json, true);
-
-        if (!isset($datos["token"])) {
-            return $_respuestas->error_401();
-        } else {
-            $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
-                if (!isset($datos["id"])) {
-                    return $_respuestas->error_400();
-                } else {
-                    $this->usuarioId = $datos["id"];
-                    $this->estado = "Inactivo";
-                    $datos = $this->obtenerUsuario($this->usuarioId);
-                    if ($datos) {
-                        $resp = $this->eliminarUsuario();
-                        if ($resp) {
-                            $respuesta = $_respuestas->response;
-                            $respuesta["result"] = array(
-                                "id" => $this->usuarioId
-                            );
-                            return $respuesta;
-                        } else {
-                            return $_respuestas->error_500();
-                        }
-                    } else {
-                        return $_respuestas->error_200("Usuario inactivo!!");
-                    }
-                }
-            } else {
-                return $_respuestas->error_401("El token enviado es invalido o ha caducado!!");
-            }
-        }
-    }
-
     //<-- ========== METODO PARA INACTIVAR USUARIO SEGUN SU ID ========== -->
-    private function eliminarUsuario()
+    public function eliminarUsuario($estado, $usuarioId)
     {
         $_pdo = new conexionBd;
         $sql = $_pdo->prepare("UPDATE usuarios SET estado=:estado
         WHERE id=:id");
-        $sql->bindValue(':estado', $this->estado);
-        $sql->bindValue(':id', $this->usuarioId);
+        $sql->bindValue(':estado', $estado);
+        $sql->bindValue(':id', $usuarioId);
         $sql->execute();
 
         $resp = $sql;
