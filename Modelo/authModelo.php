@@ -1,5 +1,6 @@
 <?php
 require_once "./Modelo/Conexion/conexion.php";
+require_once "./Modelo/credencialModelo.php";
 require_once "./Controlador/respuestas.php";
 
 class auth extends conexionBd
@@ -8,6 +9,7 @@ class auth extends conexionBd
     public function login($json)
     {
         $_respuestas = new respuestas;
+        $_credenciales = new credencial;
         $datos = json_decode($json, true);
         if (!isset($datos["correo"]) || !isset($datos["password"])) {
             // error en los campos
@@ -17,7 +19,7 @@ class auth extends conexionBd
             $correo = $datos["correo"];
             $password = $datos["password"];
             $password = parent::encriptar($password);
-            $datos = $this->obtenerDatosUsuario($correo);
+            $datos = $_credenciales->obtenerDatosCredencial($correo);
             if ($datos) {
                 // Verificar si la contraseña es igual
                 if ($password == $datos[0]["password"]) {
@@ -46,30 +48,6 @@ class auth extends conexionBd
                 // Si no existe el usuario
                 return $_respuestas->error_200("El usuario $correo no existe!!");
             }
-        }
-    }
-
-    //<!-- ========== METODO PARA OBTENER CREDENCIALES CON SU CORREO Y CONTRASEÑA ========== -->
-    public function obtenerDatosUsuario($correo)
-    {
-        $_pdo = new conexionBd;
-
-        $sql = $_pdo->prepare("SELECT * FROM credenciales WHERE correo = :correo");
-        $sql->bindValue(':correo', $correo);
-        $sql->execute();
-        $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $datos = $sql->fetchAll();
-        $resultArray = array();
-
-        foreach ($datos as $key) {
-            $resultArray[] = $key;
-        }
-
-        $resp = $this->convertirUtf8($resultArray);
-        if (isset($resp[0]["id"])) {
-            return $resp;
-        } else {
-            return 0;
         }
     }
 
@@ -114,6 +92,39 @@ class auth extends conexionBd
             return $resp;
         } else {
             return 0;
+        }
+    }
+
+    //<-- ========== METODO PARA OBTENER EL TOKEN ========== -->
+    private function buscarToken($token)
+    {
+        $_pdo = new conexionBd;
+        $sql = $_pdo->prepare("SELECT * FROM tokens WHERE token = :token AND estado = 'Activo'");
+        $sql->bindValue(':token', $token);
+        $sql->execute();
+        $sql->setFetchMode(PDO::FETCH_ASSOC);
+        $datos = $sql->fetchAll();
+        $resultArray = array();
+
+        foreach ($datos as $key) {
+            $resultArray[] = $key;
+        }
+        $resp = $this->convertirUtf8($resultArray);
+        if ($resp) {
+            return $resp;
+        } else {
+            return 0;
+        }
+    }
+
+    //<-- ========== METODO PARA VALIDAR EXISTENCIA Y ESTADO DE TOKEN ========== -->
+    public function validarToken($token)
+    {
+        $arrayToken = $this->buscarToken($token);
+        if ($arrayToken) {
+            return true;
+        }else {
+            return false;
         }
     }
 

@@ -1,6 +1,7 @@
 <?php
 require_once "./Modelo/Conexion/conexion.php";
 require_once "./Controlador/respuestas.php";
+require_once "./Modelo/authModelo.php";
 
 class usuarios extends conexionBd
 {
@@ -58,20 +59,20 @@ class usuarios extends conexionBd
     public function post($json)
     {
         $_respuestas = new respuestas;
+        $_auth = new auth;
         $datos = json_decode($json, true);
 
         if (!isset($datos["token"])) {
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            $arrayToken = $this->buscarToken();
-            if ($arrayToken) {
-                if (!isset($datos["nombre"]) || !isset($datos["rol"]) || !isset($datos["estado"])) {
+            if ($_auth->validarToken($this->token) == true) {
+                if (!isset($datos["nombre"]) || !isset($datos["rol"])) {
                     return $_respuestas->error_400();
                 } else {
                     $this->nombre = $datos["nombre"];
                     $this->rol = $datos["rol"];
-                    $this->estado = $datos["estado"];
+                    $this->estado = "Activo";
                     $resp = $this->insertarUsuario();
                     if ($resp) {
                         $respuesta = $_respuestas->response;
@@ -117,14 +118,14 @@ class usuarios extends conexionBd
     public function patch($json)
     {
         $_respuestas = new respuestas;
+        $_auth = new auth;
         $datos = json_decode($json, true);
 
         if (!isset($datos["token"])) {
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            $arrayToken = $this->buscarToken();
-            if ($arrayToken) {
+            if ($_auth->validarToken($this->token) == true) {
                 if (!isset($datos["id"])) {
                     return $_respuestas->error_400();
                 } else {
@@ -136,9 +137,7 @@ class usuarios extends conexionBd
                     if (isset($datos["rol"])) {
                         $this->rol = $datos["rol"];
                     }
-                    if (isset($datos["estado"])) {
-                        $this->estado = $datos["estado"];
-                    }
+                    $this->estado = "Activo";
                     $datos = $this->obtenerUsuario($this->usuarioId);
                     if ($datos) {
                         $resp = $this->modificarUsuario();
@@ -185,14 +184,14 @@ class usuarios extends conexionBd
     public function delete($json)
     {
         $_respuestas = new respuestas;
+        $_auth = new auth;
         $datos = json_decode($json, true);
 
         if (!isset($datos["token"])) {
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            $arrayToken = $this->buscarToken();
-            if ($arrayToken) {
+            if ($_auth->validarToken($this->token) == true) {
                 if (!isset($datos["id"])) {
                     return $_respuestas->error_400();
                 } else {
@@ -232,28 +231,6 @@ class usuarios extends conexionBd
 
         $resp = $sql;
         if ($resp == true) {
-            return $resp;
-        } else {
-            return 0;
-        }
-    }
-
-    //<-- ========== METODO PARA OBTENER EL TOKEN ========== -->
-    private function buscarToken()
-    {
-        $_pdo = new conexionBd;
-        $sql = $_pdo->prepare("SELECT * FROM tokens WHERE token = :token AND estado = 'Activo'");
-        $sql->bindValue(':token', $this->token);
-        $sql->execute();
-        $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $datos = $sql->fetchAll();
-        $resultArray = array();
-
-        foreach ($datos as $key) {
-            $resultArray[] = $key;
-        }
-        $resp = $this->convertirUtf8($resultArray);
-        if ($resp) {
             return $resp;
         } else {
             return 0;
