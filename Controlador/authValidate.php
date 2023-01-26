@@ -13,6 +13,7 @@ class authVali extends conexionBd
         $_token = new token;
         $_auth = new auth;
         $_user = new usuarios;
+        
         $datos = json_decode($json, true);
         if (!isset($datos["correo"]) || !isset($datos["password"])) {
             // error en los campos
@@ -30,10 +31,13 @@ class authVali extends conexionBd
                         $verificar = $_token->insertarToken($datos[0]["id"]);
                         if ($verificar) {
                             //Se guardo
+                            $datosUsuario = $_user->obtenerUsuario($datos[0]["usuario"]);
                             $result = $_respuestas->response;
                             $result["result"] = array(
                                 "token" => $verificar,
-                                "nombre" => ""
+                                "id" => $datosUsuario[0]["id"],
+                                "nombre" => $datosUsuario[0]["nombre"],
+                                "rol" => $datosUsuario[0]["nombreRol"]
                             );
                             return $result;
                         } else {
