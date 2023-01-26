@@ -1,5 +1,6 @@
 <?php
 require_once "./Modelo/authModelo.php";
+require_once "./Modelo/userModelo.php";
 require_once "./Modelo/tokenModelo.php";
 require_once "./Controlador/respuestas.php";
 
@@ -11,6 +12,7 @@ class authVali extends conexionBd
         $_respuestas = new respuestas;
         $_token = new token;
         $_auth = new auth;
+        $_user = new usuarios;
         $datos = json_decode($json, true);
         if (!isset($datos["correo"]) || !isset($datos["password"])) {
             // error en los campos
@@ -30,7 +32,8 @@ class authVali extends conexionBd
                             //Se guardo
                             $result = $_respuestas->response;
                             $result["result"] = array(
-                                "token" => $verificar
+                                "token" => $verificar,
+                                "nombre" => ""
                             );
                             return $result;
                         } else {

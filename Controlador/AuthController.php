@@ -36,6 +36,7 @@ class AuthController
                 http_response_code(200);
             }
             echo json_encode($datosArray);
+            
         } else {
             header("Content-Type: application/json");
             $datosArray = $_respuestas->error_405();
