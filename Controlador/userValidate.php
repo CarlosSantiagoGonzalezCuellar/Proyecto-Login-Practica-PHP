@@ -16,7 +16,7 @@ class userValidate extends conexionBd
     public function post($json)
     {
         $_respuestas = new respuestas;
-        $_auth = new auth;
+        $_token = new token;
         $_user = new usuarios;
         $datos = json_decode($json, true);
 
@@ -24,7 +24,7 @@ class userValidate extends conexionBd
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
+            if ($_token->validarToken($this->token) == true) {
                 if (!isset($datos["nombre"]) || !isset($datos["rol"])) {
                     return $_respuestas->error_400();
                 } else {
@@ -52,7 +52,7 @@ class userValidate extends conexionBd
     public function patch($json)
     {
         $_respuestas = new respuestas;
-        $_auth = new auth;
+        $_token = new token;
         $_user = new usuarios;
         $datos = json_decode($json, true);
 
@@ -60,7 +60,7 @@ class userValidate extends conexionBd
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
+            if ($_token->validarToken($this->token) == true) {
                 if (!isset($datos["id"])) {
                     return $_respuestas->error_400();
                 } else {
@@ -99,7 +99,7 @@ class userValidate extends conexionBd
     public function delete($json)
     {
         $_respuestas = new respuestas;
-        $_auth = new auth;
+        $_token = new token;
         $_user = new usuarios;
         $datos = json_decode($json, true);
 
@@ -107,7 +107,7 @@ class userValidate extends conexionBd
             return $_respuestas->error_401();
         } else {
             $this->token = $datos["token"];
-            if ($_auth->validarToken($this->token) == true) {
+            if ($_token->validarToken($this->token) == true) {
                 if (!isset($datos["id"])) {
                     return $_respuestas->error_400();
                 } else {

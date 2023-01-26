@@ -1,6 +1,7 @@
 <?php
 
 require_once "./Modelo/authModelo.php";
+require_once "./Controlador/authValidate.php";
 require_once "./Controlador/respuestas.php";
 
 class AuthController
@@ -8,7 +9,7 @@ class AuthController
     //<!-- ========== METODO POR DEFECTO DE AUTH: POST ========== -->
     public function defecto()
     {
-        $_auth = new auth;
+        $_authVali = new authVali;
         $_respuestas = new respuestas;
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -25,7 +26,7 @@ class AuthController
                 $postBody = file_get_contents("php://input");
             }
             //Envia datos al manejador
-            $datosArray = $_auth->login($postBody);
+            $datosArray = $_authVali->login($postBody);
             //Devuelve respuesta
             header("Content-Type: application/json");
             if (isset($datosArray["result"]["error_id"])) {
