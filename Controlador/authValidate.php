@@ -16,14 +16,15 @@ class authVali extends conexionBd
         
         $datos = json_decode($json, true);
         if (!isset($datos["correo"]) || !isset($datos["password"])) {
-            // error en los campos
+            // Error en los campos
             return $_respuestas->error_400();
         } else {
-            // todo esta bien
+            // Todo esta bien
             $correo = $datos["correo"];
             $password = $datos["password"];
             $password = parent::encriptar($password);
             $datos = $_auth->obtenerDatosCredencial($correo);
+
             if ($datos) {
                 // Verificar si la contraseña es igual
                 if ($password == $datos[0]["password"]) {
@@ -33,12 +34,14 @@ class authVali extends conexionBd
                             //Se guardo
                             $datosUsuario = $_user->obtenerUsuario($datos[0]["usuario"]);
                             $result = $_respuestas->response;
+
                             $result["result"] = array(
                                 "token" => $verificar,
                                 "id" => $datosUsuario[0]["id"],
                                 "nombre" => $datosUsuario[0]["nombre"],
                                 "rol" => $datosUsuario[0]["nombreRol"]
                             );
+
                             return $result;
                         } else {
                             //No se guardo
