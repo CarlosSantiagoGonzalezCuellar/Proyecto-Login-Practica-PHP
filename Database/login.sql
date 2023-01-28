@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:33065
--- Tiempo de generación: 17-01-2023 a las 19:45:32
+-- Tiempo de generación: 28-01-2023 a las 16:13:16
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.6
 
@@ -34,7 +34,7 @@ CREATE TABLE `credenciales` (
   `usuario` int(11) NOT NULL,
   `correo` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
   `password` varchar(200) CHARACTER SET utf8mb4 NOT NULL,
-  `estado` varchar(20) COLLATE utf8_unicode_ci NOT NULL
+  `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -42,8 +42,8 @@ CREATE TABLE `credenciales` (
 --
 
 INSERT INTO `credenciales` (`id`, `usuario`, `correo`, `password`, `estado`) VALUES
-(1, 1, 'usuario1@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 'Activo'),
-(2, 3, 'usuario2@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', '');
+(1, 1, 'usuario1@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1),
+(2, 3, 'usuario2@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1);
 
 -- --------------------------------------------------------
 
@@ -77,7 +77,7 @@ CREATE TABLE `tokens` (
   `token` varchar(200) CHARACTER SET utf8 NOT NULL,
   `usuario` int(11) NOT NULL,
   `fecha_expiracion` date NOT NULL,
-  `estado` varchar(20) CHARACTER SET utf8 NOT NULL
+  `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -85,7 +85,17 @@ CREATE TABLE `tokens` (
 --
 
 INSERT INTO `tokens` (`id`, `token`, `usuario`, `fecha_expiracion`, `estado`) VALUES
-(1, '83bf18dd85715f5e930fab82206572d8', 1, '2023-01-17', 'Activo');
+(1, '83bf18dd85715f5e930fab82206572d8', 1, '2023-01-17', 0),
+(13, '9f0e09791fe02e317b1c4dbadfb366cc', 1, '2023-01-20', 0),
+(14, 'f51ce444308deeb27d90a63f346931f0', 1, '2023-01-18', 0),
+(15, '33631c5ba7d966696698098aab874979', 1, '2023-01-22', 0),
+(16, '78f710f8b1938512e361eae3f02b4eb2', 1, '2023-01-24', 0),
+(17, '5f57b44f2e1b56cd4923c3c02053ba58', 1, '2023-01-25', 0),
+(18, 'e7fa2403901a1b4632933471f0948774', 2, '2023-01-25', 0),
+(19, '6d4fc063b10a5e7c64a3cd5207007e09', 2, '2023-01-27', 1),
+(20, '1441f41b7b3b6e806e08ed1bff6eeaef', 2, '2023-01-27', 1),
+(21, 'e720289df871b3e83036af6ae7b049a8', 2, '2023-01-27', 1),
+(22, 'cc601f7b227136176f4e8cd2bfe4bfe5', 1, '2023-01-27', 1);
 
 -- --------------------------------------------------------
 
@@ -97,7 +107,7 @@ CREATE TABLE `usuarios` (
   `id` int(11) NOT NULL,
   `nombre` varchar(200) CHARACTER SET utf8 NOT NULL,
   `rol` int(11) NOT NULL,
-  `estado` varchar(20) COLLATE utf8_unicode_ci NOT NULL
+  `estado` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
@@ -105,12 +115,20 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `rol`, `estado`) VALUES
-(1, 'Santiago Cuellar', 2, 'Activo'),
-(3, 'Marcela Cuellar', 5, 'Activo'),
-(4, 'Andres Bermeo', 1, 'Inactivo'),
-(5, 'Luisa Orozco', 1, 'Activo'),
-(6, 'Ronald Perdomo', 1, 'Activo'),
-(7, 'Maykol Toledo', 1, 'Inactivo');
+(1, 'Santiago Cuellar', 2, 1),
+(3, 'Marcela Cuellar', 5, 1),
+(4, 'Andres Bermeo', 1, 0),
+(5, 'Luisa Orozco', 1, 1),
+(6, 'Pablino Perdomo', 5, 0),
+(7, 'Maykol Toledo', 1, 1),
+(8, 'Alberto Cuellar', 6, 1),
+(9, 'Natalia Soto', 2, 1),
+(10, 'Oscar Medina', 2, 0),
+(12, 'Juan Niño', 6, 0),
+(13, 'Kevin Murillo', 6, 0),
+(14, 'Yaneth Capera', 5, 1),
+(15, 'Samuel Tafur', 1, 1),
+(16, 'Andres Escobar', 1, 0);
 
 --
 -- Índices para tablas volcadas
@@ -163,13 +181,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `tokens`
 --
 ALTER TABLE `tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Restricciones para tablas volcadas

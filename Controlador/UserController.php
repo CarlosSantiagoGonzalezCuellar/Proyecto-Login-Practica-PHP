@@ -37,13 +37,13 @@ class UserController
                 echo json_encode($datosArray);
             }
 
-        //<!-- ========== METODO PATCH SI URL = 2 ========== -->
+            //<!-- ========== METODO PATCH SI URL = 2 ========== -->
         } elseif ($url[2] == "2") {
             if ($_SERVER["REQUEST_METHOD"] == "PATCH") {
                 //Recibe datos enviados 
-                $postBody = file_get_contents("php://input");
+                $patchBody = file_get_contents("php://input");
                 //Envia datos al manejador
-                $datosArray = $_userVali->patch($postBody);
+                $datosArray = $_userVali->patch($patchBody);
                 //Devuelve respuesta
                 header("Content-Type: application/json");
                 if (isset($datosArray["result"]["error_id"])) {
@@ -98,9 +98,9 @@ class UserController
         $_respuestas = new respuestas;
         if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
             //Recibe datos enviados 
-            $postBody = file_get_contents("php://input");
+            $deleteBody = file_get_contents("php://input");
             //Envia datos al manejador
-            $datosArray = $_userVali->delete($postBody);
+            $datosArray = $_userVali->delete($deleteBody);
             //Devuelve respuesta
             header("Content-Type: application/json");
             if (isset($datosArray["result"]["error_id"])) {

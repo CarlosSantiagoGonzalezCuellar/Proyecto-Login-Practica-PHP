@@ -25,6 +25,7 @@ class AuthController
                 //Recibe datos enviados 
                 $postBody = file_get_contents("php://input");
             }
+            
             //Envia datos al manejador
             $datosArray = $_authVali->login($postBody);
             //Devuelve respuesta
