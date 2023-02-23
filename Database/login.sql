@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:33065
--- Tiempo de generación: 28-01-2023 a las 16:13:16
+-- Tiempo de generación: 23-02-2023 a las 20:09:28
 -- Versión del servidor: 10.4.24-MariaDB
 -- Versión de PHP: 8.1.6
 
@@ -42,8 +42,7 @@ CREATE TABLE `credenciales` (
 --
 
 INSERT INTO `credenciales` (`id`, `usuario`, `correo`, `password`, `estado`) VALUES
-(1, 1, 'usuario1@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1),
-(2, 3, 'usuario2@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1);
+(1, 1, 'usuario1@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1);
 
 -- --------------------------------------------------------
 
@@ -62,9 +61,7 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`id`, `nombreRol`) VALUES
 (1, 'Administrador'),
-(2, 'Desarrollador'),
-(5, 'RRHH'),
-(6, 'SEO');
+(2, 'Usuario');
 
 -- --------------------------------------------------------
 
@@ -91,11 +88,8 @@ INSERT INTO `tokens` (`id`, `token`, `usuario`, `fecha_expiracion`, `estado`) VA
 (15, '33631c5ba7d966696698098aab874979', 1, '2023-01-22', 0),
 (16, '78f710f8b1938512e361eae3f02b4eb2', 1, '2023-01-24', 0),
 (17, '5f57b44f2e1b56cd4923c3c02053ba58', 1, '2023-01-25', 0),
-(18, 'e7fa2403901a1b4632933471f0948774', 2, '2023-01-25', 0),
-(19, '6d4fc063b10a5e7c64a3cd5207007e09', 2, '2023-01-27', 1),
-(20, '1441f41b7b3b6e806e08ed1bff6eeaef', 2, '2023-01-27', 1),
-(21, 'e720289df871b3e83036af6ae7b049a8', 2, '2023-01-27', 1),
-(22, 'cc601f7b227136176f4e8cd2bfe4bfe5', 1, '2023-01-27', 1);
+(22, 'cc601f7b227136176f4e8cd2bfe4bfe5', 1, '2023-01-27', 0),
+(23, '11491cd6b95d3f8beb6c09c13cc75000', 1, '2023-02-24', 1);
 
 -- --------------------------------------------------------
 
@@ -115,20 +109,17 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `rol`, `estado`) VALUES
-(1, 'Santiago Cuellar', 2, 1),
-(3, 'Marcela Cuellar', 5, 1),
+(1, 'Santiago Cuellar', 1, 1),
 (4, 'Andres Bermeo', 1, 0),
 (5, 'Luisa Orozco', 1, 1),
-(6, 'Pablino Perdomo', 5, 0),
 (7, 'Maykol Toledo', 1, 1),
-(8, 'Alberto Cuellar', 6, 1),
 (9, 'Natalia Soto', 2, 1),
 (10, 'Oscar Medina', 2, 0),
-(12, 'Juan Niño', 6, 0),
-(13, 'Kevin Murillo', 6, 0),
-(14, 'Yaneth Capera', 5, 1),
 (15, 'Samuel Tafur', 1, 1),
-(16, 'Andres Escobar', 1, 0);
+(16, 'Andres Escobar', 1, 0),
+(17, 'Eladio Salazar', 1, 1),
+(18, 'Alberto Cuellar', 2, 1),
+(22, 'Yanneth Capera', 2, 1);
 
 --
 -- Índices para tablas volcadas
@@ -181,13 +172,13 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `tokens`
 --
 ALTER TABLE `tokens`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Restricciones para tablas volcadas
