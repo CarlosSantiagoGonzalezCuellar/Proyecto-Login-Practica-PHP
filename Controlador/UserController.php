@@ -37,7 +37,7 @@ class UserController
                 echo json_encode($datosArray);
             }
 
-        //<!-- ========== METODO PATCH SI URL = 2 ========== -->
+            //<!-- ========== METODO PATCH SI URL = 2 ========== -->
         } elseif ($url[2] == "2") {
             if ($_SERVER["REQUEST_METHOD"] == "PATCH") {
                 //Recibe datos enviados 
